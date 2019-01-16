@@ -86,34 +86,22 @@ enum SizeType {
 
 extension UIImage {
     public func compressedImage() -> UIImage {
-        if let imgData = UIImageJPEGRepresentation(self, 1) {
-            let imgFileSize = imgData.count
-            print("origin file size: \(imgFileSize)")
-            
-            if let type = SizeType.init(size: self.size) {
-                let compressSize = type.size.size
-                let resizedImage = resizeTo(size: CGSize(width: type.size.minV, height: type.size.maxV))
-                if let data = resizedImage.compressTo(size: compressSize) {
-                    print("compressed file size: \(data.count)")
-                    return UIImage(data: data) ?? self
-                }
+        if let type = SizeType.init(size: self.size) {
+            let compressSize = type.size.size
+            let resizedImage = resizeTo(size: CGSize(width: type.size.minV, height: type.size.maxV))
+            if let data = resizedImage.compressTo(size: compressSize) {
+                return UIImage(data: data) ?? self
             }
         }
         return self
     }
     
     public func compressedData() -> Data? {
-        if let imgData = UIImageJPEGRepresentation(self, 1) {
-            let imgFileSize = imgData.count
-            print("origin file size: \(imgFileSize)")
-            
-            if let type = SizeType.init(size: self.size) {
-                let compressSize = type.size.size
-                let resizedImage = resizeTo(size: CGSize(width: type.size.minV, height: type.size.maxV))
-                if let data = resizedImage.compressTo(size: compressSize) {
-                    print("compressed file size: \(data.count)")
-                    return data
-                }
+        if let type = SizeType.init(size: self.size) {
+            let compressSize = type.size.size
+            let resizedImage = resizeTo(size: CGSize(width: type.size.minV, height: type.size.maxV))
+            if let data = resizedImage.compressTo(size: compressSize) {
+                return data
             }
         }
         return nil
