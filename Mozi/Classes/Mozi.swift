@@ -5,6 +5,7 @@
 //  Created by iCell on 01/06/2017.
 //
 //
+import UIKit
 
 enum WidthType {
     case small(minValue: CGFloat, maxValue: CGFloat)
@@ -34,7 +35,7 @@ enum WidthType {
         case .large(let minV, let maxV):
             return (minV: minV / 4, maxV: maxV / 4, size: max(100, ((minV / 4) * (maxV / 4)) / pow(10240 / 4, 2) * 300))
         case .giant(let minV, let maxV):
-            let multiple = ((maxV / 1280) == 0) ? 1 : (maxV / 1280)
+            let multiple = (Int(maxV / 1280) == 0) ? 1 : (maxV / 1280)
             return (minV: minV / multiple, maxV: maxV / multiple, size: max(100, ((minV / multiple) * (maxV / multiple)) / pow(2560, 2) * 300))
         }
     }
@@ -53,13 +54,13 @@ enum SizeType {
         
         if ratio > 0 && ratio <= 0.5 {
             // [1:1 ~ 9:16)
-            self = .square(minValue: minV, maxValue: maxV)
+            self = .rectangle(minValue: minV, maxValue: maxV)
         } else if ratio > 0.5 && ratio < 0.5625 {
             // [9:16 ~ 1:2)
             self = .other(minValue: minV, maxValue: maxV)
         } else if ratio >= 0.5625 && ratio <= 1 {
             // [1:2 ~ 1:∞)
-            self = .rectangle(minValue: minV, maxValue: maxV)
+            self = .square(minValue: minV, maxValue: maxV)
         } else {
             return nil
         }
@@ -71,7 +72,7 @@ enum SizeType {
             let widthType = WidthType.init(minV: minV, maxV: maxV)
             return widthType.size
         case .rectangle(let minV, let maxV):
-            let multiple = ((maxV / 1280) == 0) ? 1 : (maxV / 1280)
+            let multiple = (Int(minV / 1280) == 0) ? 1 : (minV / 1280)
             let size = max(100, ((minV / multiple) * (maxV / multiple)) / (1440 * 2560) * 400)
             return (minV: minV / multiple, maxV: maxV / multiple, size: size)
         case .other(let minV, let maxV):
@@ -119,14 +120,8 @@ extension UIImage {
     }
     
     public func resizeTo(size: CGSize) -> UIImage {
-        let ratio = self.size.height / self.size.width
-        var factor: CGFloat = 1.0
-        if ratio > 1 {
-            factor = size.height / size.width
-        } else {
-            factor = size.width / size.height
-        }
-        let toSize = CGSize(width: self.size.width * factor, height: self.size.height * factor)
+        let isV = self.size.height > self.size.width
+        let toSize = isV ? size : CGSize.init(width: size.height, height: size.width)
         
         UIGraphicsBeginImageContext(toSize)
         draw(in: CGRect.init(origin: CGPoint(x: 0, y: 0), size: toSize))
