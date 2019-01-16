@@ -53,13 +53,13 @@ enum SizeType {
         let ratio = minV / maxV
         
         if ratio > 0 && ratio <= 0.5 {
-            // [1:1 ~ 9:16)
+            // [1:2 ~ 1:∞)
             self = .rectangle(minValue: minV, maxValue: maxV)
         } else if ratio > 0.5 && ratio < 0.5625 {
             // [9:16 ~ 1:2)
             self = .other(minValue: minV, maxValue: maxV)
         } else if ratio >= 0.5625 && ratio <= 1 {
-            // [1:2 ~ 1:∞)
+            // [1:1 ~ 9:16)
             self = .square(minValue: minV, maxValue: maxV)
         } else {
             return nil
